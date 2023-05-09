@@ -1,19 +1,20 @@
 import pandas as pd
 import os
 import re
+import sys
 
 # Get the directory from the command-line argument (if provided)
 if len(sys.argv) > 1:
     directory = sys.argv[1]
 else:
-    directory = '.'
+    directory = './'
 
 heart_file = None
 oxygen_file = None
 hrbrc_file = None
 
 # Get a list of files in the current directory
-files = os.listdir()
+files = os.listdir(directory)
 
 # Loop through the files and find the first one that contains each of the specified strings
 for file in files:
@@ -29,9 +30,9 @@ print("Heart rate file:", heart_file)
 print("Oxygen level file:", oxygen_file)
 print("HRBRC file:", hrbrc_file)
 
-df1=pd.read_csv(heart_file, header=1, na_values=[''], index_col=False)
-df2=pd.read_csv(oxygen_file, header=1, na_values=[''], index_col=False)
-df3=pd.read_csv(hrbrc_file, header=0)
+df1=pd.read_csv(directory+heart_file, header=1, na_values=[''], index_col=False)
+df2=pd.read_csv(directory+oxygen_file, header=1, na_values=[''], index_col=False)
+df3=pd.read_csv(directory+hrbrc_file, header=0)
 
 # Convert the date column to a datetime type
 df1['DateTime'] = pd.to_datetime(df1['com.samsung.health.heart_rate.end_time'])
