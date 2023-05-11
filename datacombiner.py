@@ -22,7 +22,7 @@ for file in files:
         heart_file = file
     elif "oxygen" in file and not oxygen_file:
         oxygen_file = file
-    elif "HRBRC" in file and not hrbrc_file:
+    elif "datalog" in file and not hrbrc_file:
         hrbrc_file = file
     
 
@@ -32,12 +32,14 @@ print("HRBRC file:", hrbrc_file)
 
 df1=pd.read_csv(directory+heart_file, header=1, na_values=[''], index_col=False)
 df2=pd.read_csv(directory+oxygen_file, header=1, na_values=[''], index_col=False)
-df3=pd.read_csv(directory+hrbrc_file, header=0)
+#assume the first row of data has sensor boot data and should be thrown out
+df3=pd.read_csv(hrbrc_file, header=0, skiprows=[1])
 
 # Convert the date column to a datetime type
 df1['DateTime'] = pd.to_datetime(df1['com.samsung.health.heart_rate.end_time'])
 df2['DateTime'] = pd.to_datetime(df2['com.samsung.health.oxygen_saturation.end_time'])
-df3['DateTime'] = pd.to_datetime(df3['Date']+ ' ' + df3[' Time'])
+df3['DateTime'] = pd.to_datetime(df3['Year'].astype(str)+'-'+df3['Month'].astype(str)+'-'+df3['Day'].astype(str)+', '+df3['Hour'].astype(str)+':'+df3['Minute'].astype(str)+':'+df3['Second'].astype(str))
+#df3['DateTime'] = pd.to_datetime(df3['Date']+ ' ' + df3[' Time'])
 
 # Perform an outer join on date1 and date2
 combined_df = pd.merge(df1, df2, left_on='DateTime', right_on='DateTime', how='outer')
